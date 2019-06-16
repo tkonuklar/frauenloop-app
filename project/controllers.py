@@ -78,7 +78,26 @@ def get_user(user_id):
     else:
         abort(404, 'User does not exist')
 
-
+# http://127.0.0.1:5000/users
+# request body sample : {
+# 	"name":"Sureyya",
+# 	"pin": 1111
+# }
+@app.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    data = request.get_json(force=True) # force=True will make sure this works even if a client does not specify application/json
+    validate(instance=data, schema=user_schema)
+    user_name= data['name']
+    pin = data['pin']
+    user = User.query.filter_by(id=user_id).first()
+    if user:
+        user.name = user_name
+        user.pin = pin
+        db.session.commit()
+        response = get_user_by_name(user_name)
+    else:
+        abort(404, description='User does not exist') # for now we will abort, then work on exception handling
+    return response
 
 def get_account_by_name(name):
     user = User.query.filter_by(name=name).first()
