@@ -26,6 +26,16 @@ account_schema ={
 def root():
     return  jsonify({'message':'You call root url'})
 
+def get_user_by_name(name):
+    user = User.query.filter_by(name=name).first()
+    if user:
+        user_schema = UserSchema()  
+        output = user_schema.dump(user).data
+        return jsonify(output)
+    else:
+        abort(404, 'User does not exist')
+
+
 # http://127.0.0.1:5000/users
 # request body sample : {
 # 	"name":"Sureyya",
@@ -37,14 +47,15 @@ def create_user():
     validate(instance=data, schema=user_schema)
     user_name= data['name']
     pin = data['pin']
-    user = User.query.filter_by(name=data['name']).first()
+    user = User.query.filter_by(name=user_name).first()
     if user:
         abort(400, description='User is already exist') # for now we will abort, then work on exception handling
     else:
         user = User(name = user_name, pin = pin)
         db.session.add(user)
         db.session.commit()
-    return jsonify(data)
+        response = get_user_by_name(user_name)
+    return response
 
 # http://127.0.0.1:5000/users
 # no request body
@@ -68,7 +79,18 @@ def get_user(user_id):
         abort(404, 'User does not exist')
 
 
-# http://127.0.0.1:5000/users/account
+
+def get_account_by_name(name):
+    user = User.query.filter_by(name=name).first()
+    if user:
+        user_schema = UserSchema()  
+        output = user_schema.dump(user).data
+        return jsonify(output)
+    else:
+        abort(404, 'User does not exist')
+
+
+# http://127.0.0.1:5000/users/accounts
 # request body sample : 
 # {
 # 	"balance": 1500,
@@ -80,9 +102,10 @@ def create_account():
     validate(instance=data, schema=account_schema)
     balance = data['balance']
     owner_id = data['ownerId']
+    name = data['name']
     user = User.query.filter_by(id=owner_id).first()
     if user:
-        account = Account(balance = balance, owner_id = owner_id)
+        account = Account(name=name, balance = balance, owner_id = owner_id)
         db.session.add(account)
         db.session.commit()
         return jsonify(data)
