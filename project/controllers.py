@@ -1,10 +1,10 @@
 from flask import jsonify, request, abort
-from jsonschema import validate
+from jsonschema import validate # to validate the request body
 from project import app, db
 from project.models import User, Account
-from project.schemas import UserSchema, AccountSchema
+from project.schemas import UserSchema, AccountSchema # to serialize our Db Models
 
-
+# Request body validation schemas
 user_schema ={
      "type" : "object",
      "properties" : {
@@ -12,7 +12,6 @@ user_schema ={
          "pin" : {"type" : "number"},
      },
 }
-
 account_schema ={
      "type" : "object",
      "properties" : {
@@ -26,6 +25,9 @@ account_schema ={
 def root():
     return  jsonify({'message':'You call root url'})
 
+### USER ###
+
+# helper method
 def get_user_by_name(name):
     user = User.query.filter_by(name=name).first()
     if user:
@@ -35,11 +37,10 @@ def get_user_by_name(name):
     else:
         abort(404, 'User does not exist')
 
-
 # http://127.0.0.1:5000/users
 # request body sample : {
 # 	"name":"Sureyya",
-# 	"pin": 1236
+# 	"pin": 1234
 # }
 @app.route('/users', methods=['POST'])
 def create_user():
@@ -99,15 +100,20 @@ def update_user(user_id):
         abort(404, description='User does not exist') # for now we will abort, then work on exception handling
     return response
 
-def get_account_by_name(name):
-    user = User.query.filter_by(name=name).first()
+# http://127.0.0.1:5000/users/1
+# no request body
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
     if user:
-        user_schema = UserSchema()  
-        output = user_schema.dump(user).data
-        return jsonify(output)
+        db.session.delete(user)
+        db.session.commit()
+        return '', 204
     else:
-        abort(404, 'User does not exist')
+        abort(404, 'User not found')
 
+
+### ACCOUNT ###
 
 # http://127.0.0.1:5000/users/accounts
 # request body sample : 
