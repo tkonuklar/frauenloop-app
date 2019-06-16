@@ -121,19 +121,18 @@ def delete_user(user_id):
 # 	"balance": 1500,
 # 	"ownerId": 1
 # }
-@app.route('/users/account', methods=['POST'])
+@app.route('/users/accounts', methods=['POST'])
 def create_account():
     data = request.get_json(force=True) # force=True will make sure this works even if a client does not specify application/json
     validate(instance=data, schema=account_schema)
     balance = data['balance']
     owner_id = data['ownerId']
-    name = data['name']
     user = User.query.filter_by(id=owner_id).first()
     if user:
-        account = Account(name=name, balance = balance, owner_id = owner_id)
+        account = Account(balance = balance, owner_id = owner_id)
         db.session.add(account)
         db.session.commit()
         return jsonify(data)
     else:
-         abort(400, description='Owner is already exist') # for now we will abort, then work on exception handling
+         abort(404, description='Owner does not exist') # for now we will abort, then work on exception handling
 
