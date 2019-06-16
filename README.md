@@ -1,6 +1,6 @@
 # Restaurant App - FrauenLoop
 
-Building a web app using Python, Flask.
+Building an API using Python, Flask.
 
 ## SETUP
 
