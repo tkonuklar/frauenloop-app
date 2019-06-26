@@ -1,4 +1,4 @@
-# Restaurant App - FrauenLoop
+# Bank Account App - FrauenLoop
 
 Building an API using Python, Flask.
 
