@@ -23,7 +23,9 @@ account_schema ={
 
 @app.route('/', methods=['GET'])
 def root():
-    return  jsonify({'message':'You call root url'})
+    return  jsonify(
+        {'message':'You call root url'}
+        )
 
 ### USER ###
 
@@ -60,12 +62,21 @@ def create_user():
 
 # http://127.0.0.1:5000/users
 # no request body
-@app.route('/users', methods=['GET'])
+@app.route('/users', methods=['GET','PUT'])
 def get_users():
     users = User.query.all()
     user_schema = UserSchema(many=True)  
     output = user_schema.dump(users).data
     return jsonify(output)
+
+# http://127.0.0.1:5000/users
+# no request body
+@app.route('/users/prety', methods=['GET','PUT'])
+def get_users_prety():
+    users = User.query.all()
+    user_schema = UserSchema(many=True)  
+    output = user_schema.dump(users).data
+    return str(users[0].account[0].balance)
 
 # http://127.0.0.1:5000/users/1 
 # no request body
@@ -86,7 +97,7 @@ def get_user(user_id):
 # }
 @app.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
-    data = request.get_json(force=True) # force=True will make sure this works even if a client does not specify application/json
+    data = request.get_json(force=True) # force=True will make sure this works even if a client does not specify application/json 
     validate(instance=data, schema=user_schema)
     user_name= data['name']
     pin = data['pin']
