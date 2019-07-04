@@ -1,6 +1,6 @@
-from flask import request
-
+from flask import request, jsonify, abort
 from project.models import User
+from project.schemas import UserSchema
 from project import app, db
 
 @app.route('/')
@@ -104,8 +104,36 @@ def transfer():
         else:
             return 'Sender does not exist'
 
-
 @app.route('/users', methods=['GET'])
 def get_users():
+    user_schema = UserSchema(many=True)
     users = User.query.all()
-    return users
+    response = user_schema.dump(users).data
+    return  jsonify(response)
+
+
+@app.route('/users',methods=['POST'])
+def create_user():
+    data  = request.get_json()
+    new_name = data['name']
+    new_pin = int(data['pin'])
+    new_balance = int(data['balance'])
+    if not new_name and new_balance and new_pin:
+        abort(400, description="Your fault client!!")
+    else:
+        # check user does exist
+        user = User.query.filter_by(name=new_name).first()
+        if user:
+            abort(400,description="Upss! User already exists")
+        else:
+            new_user = User(name=new_name, pin=new_pin, balance=new_balance)
+            db.session.add(new_user)
+            db.session.commit()
+            user_schema = UserSchema()
+            response = user_schema.dump(new_user).data
+            return jsonify(response)
+
+
+
+
+

@@ -62,7 +62,7 @@ def create_user():
 
 # http://127.0.0.1:5000/users
 # no request body
-@app.route('/users', methods=['GET','PUT'])
+@app.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
     user_schema = UserSchema(many=True)  
