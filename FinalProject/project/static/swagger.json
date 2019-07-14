@@ -1,0 +1,368 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "FrauenLoop",
+        "version": "1.0.0",
+        "title": "FrauenLoop Backend Final Project",
+        "contact": {
+            "email": "example@mail.com"
+        },
+        "license": {
+            "name": "FrauenLoop",
+            "url": "https://www.frauenloop.org/"
+        }
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Users",
+            "description": "API for user requesting and return users"
+        },
+        {
+            "name": "Accounts",
+            "description": "API for account requesting and return accounts"
+        }
+    ],
+    "paths": {
+        "/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Returns User List",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserListResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create a new user",
+                "requestBody": {
+                    "description": "User Request Post Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data."
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/userId"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user request with given ID",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/userId"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad Request."
+                    },
+                    "404": {
+                        "description": "Failed. User not found."
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a User by ID",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/userId"
+                    }
+                ],
+                "requestBody": {
+                    "description": "User Update Request Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad Request."
+                    },
+                    "404": {
+                        "description": "Failed. Not Found."
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete User by ID",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/userId"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Failed. Bad Request."
+                    },
+                    "404": {
+                        "description": "Failed. User not found."
+                    }
+                }
+            }
+        },
+        "/accounts": {
+            "post": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Create a new account",
+                "requestBody": {
+                    "description": "Account Request Post Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AccountRequest"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/Account"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "parameters": {
+            "userId": {
+                "name": "id",
+                "in": "path",
+                "description": "User Id",
+                "required": "true",
+                "example": "1",
+                "schema": {
+                    "type": "number"
+                }
+            }
+        },
+        "schemas": {
+            "UserRequest": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "pin"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Tugce",
+                        "description": "User's Name"
+                    },
+                    "pin": {
+                        "type": "string",
+                        "example": 1234,
+                        "format": "number",
+                        "description": "User's Pin"
+                    }
+                }
+            },
+            "UserUpdateRequest": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "pin"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Tugce",
+                        "description": "User's Name"
+                    },
+                    "pin": {
+                        "type": "string",
+                        "example": 1234,
+                        "format": "number",
+                        "description": "User's Pin"
+                    }
+                }
+            },
+            "User": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "pin",
+                    "created_at",
+                    "account"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": 1,
+                        "format": "number",
+                        "description": "User's ID"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Tugce",
+                        "description": "User's Name"
+                    },
+                    "pin": {
+                        "type": "string",
+                        "example": 1234,
+                        "format": "number",
+                        "description": "User's Pin"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2016-07-01T12:00:00Z"
+                    },
+                    "account": {
+                        "$ref": "#/components/schemas/Account"
+                    }
+                }
+            },
+            "AccountRequest": {
+                "type": "object",
+                "required": [
+                    "balance",
+                    "owner"
+                ],
+                "properties": {
+                    "balance": {
+                        "type": "string",
+                        "format":"number",
+                        "example": 15000,
+                        "description": "Account's Balance"
+                    },
+                    "owner": {
+                        "type": "string",
+                        "format": "number",
+                        "example": 1,
+                        "description": "Account's Owner ID"
+                    }
+                }
+            },
+            "Account": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "balance",
+                    "owner",
+                    "created_at"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": 1,
+                        "format": "number",
+                        "description": "Account's ID"
+                    },
+                    "balance": {
+                        "type": "string",
+                        "format":"number",
+                        "example": "15000",
+                        "description": "Account's Balance"
+                    },
+                    "owner": {
+                        "type": "string",
+                        "format": "number",
+                        "example": 1,
+                        "description": "Account's Owner ID"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2016-07-01T12:00:00Z"
+                    }
+                }
+            },
+            "UserListResponse": {
+                "properties": {
+                    "users": {
+                        "type": "array",
+                        "definition": "List of users",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

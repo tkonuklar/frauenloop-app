@@ -5,14 +5,14 @@ from project.models import User, Account
 from project.schemas import UserSchema, AccountSchema # to serialize our Db Models
 
 # Request body validation schemas
-user_schema ={
+user_request_schema ={
      "type" : "object",
      "properties" : {
          "name" : {"type" : "string"},
          "pin" : {"type" : "number"},
      },
 }
-account_schema ={
+account_request_schema ={
      "type" : "object",
      "properties" : {
          "balance" : {"type" : "number"},
@@ -29,16 +29,6 @@ def root():
 
 ### USER ###
 
-# helper method
-def get_user_by_name(name):
-    user = User.query.filter_by(name=name).first()
-    if user:
-        user_schema = UserSchema()  
-        output = user_schema.dump(user).data
-        return jsonify(output)
-    else:
-        abort(404, 'User does not exist')
-
 # http://127.0.0.1:5000/users
 # request body sample : {
 # 	"name":"Sureyya",
@@ -47,7 +37,7 @@ def get_user_by_name(name):
 @app.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json(force=True) # force=True will make sure this works even if a client does not specify application/json
-    validate(instance=data, schema=user_schema)
+    validate(instance=data, schema=user_request_schema)
     user_name= data['name']
     pin = data['pin']
     user = User.query.filter_by(name=user_name).first()
@@ -57,7 +47,9 @@ def create_user():
         user = User(name = user_name, pin = pin)
         db.session.add(user)
         db.session.commit()
-        response = get_user_by_name(user_name)
+        user_schema = UserSchema()  
+        response = user_schema.dump(user).data
+        return jsonify(response)
     return response
 
 # http://127.0.0.1:5000/users
@@ -66,8 +58,8 @@ def create_user():
 def get_users():
     users = User.query.all()
     user_schema = UserSchema(many=True)  
-    output = user_schema.dump(users).data
-    return jsonify(output)
+    response = user_schema.dump(users).data
+    return jsonify(response)
 
 # http://127.0.0.1:5000/users
 # no request body
@@ -75,8 +67,8 @@ def get_users():
 def get_users_prety():
     users = User.query.all()
     user_schema = UserSchema(many=True)  
-    output = user_schema.dump(users).data
-    return str(users[0].account[0].balance)
+    response = user_schema.dump(users).data
+    return jsonify(response)
 
 # http://127.0.0.1:5000/users/1 
 # no request body
@@ -85,8 +77,8 @@ def get_user(user_id):
     user = User.query.filter_by(id=user_id).first()
     if user:
         user_schema = UserSchema()  
-        output = user_schema.dump(user).data
-        return jsonify(output)
+        response = user_schema.dump(user).data
+        return jsonify(response)
     else:
         abort(404, 'User does not exist')
 
@@ -98,7 +90,7 @@ def get_user(user_id):
 @app.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
     data = request.get_json(force=True) # force=True will make sure this works even if a client does not specify application/json 
-    validate(instance=data, schema=user_schema)
+    validate(instance=data, schema=user_request_schema)
     user_name= data['name']
     pin = data['pin']
     user = User.query.filter_by(id=user_id).first()
@@ -106,10 +98,11 @@ def update_user(user_id):
         user.name = user_name
         user.pin = pin
         db.session.commit()
-        response = get_user_by_name(user_name)
+        user_schema = UserSchema()  
+        response = user_schema.dump(user).data
+        return jsonify(response)
     else:
         abort(404, description='User does not exist') # for now we will abort, then work on exception handling
-    return response
 
 # http://127.0.0.1:5000/users/1
 # no request body
@@ -126,24 +119,26 @@ def delete_user(user_id):
 
 ### ACCOUNT ###
 
-# http://127.0.0.1:5000/users/accounts
+# http://127.0.0.1:5000/accounts
 # request body sample : 
 # {
 # 	"balance": 1500,
 # 	"ownerId": 1
 # }
-@app.route('/users/accounts', methods=['POST'])
+@app.route('/accounts', methods=['POST'])
 def create_account():
     data = request.get_json(force=True) # force=True will make sure this works even if a client does not specify application/json
-    validate(instance=data, schema=account_schema)
+    validate(instance=data, schema=account_request_schema)
     balance = data['balance']
-    owner_id = data['ownerId']
+    owner_id = data['owner']
     user = User.query.filter_by(id=owner_id).first()
     if user:
         account = Account(balance = balance, owner_id = owner_id)
         db.session.add(account)
         db.session.commit()
-        return jsonify(data)
+        account_schema = AccountSchema()  
+        response = account_schema.dump(account).data
+        return jsonify(response)
     else:
          abort(404, description='Owner does not exist') # for now we will abort, then work on exception handling
 
