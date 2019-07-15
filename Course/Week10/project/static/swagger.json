@@ -1,0 +1,290 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "This app is great",
+        "version": "1.0.0",
+        "title": "FrauenLoop Bank Project",
+        "contact": {
+            "email": "tkonuklar@gmail.com"
+        },
+        "license": {
+            "name": "FrauenLoop",
+            "url": "https://www.frauenloop.org/"
+        }
+    },
+    "server": [
+        {
+            "url": "/"
+        },
+        {
+            "url": "www.google.com"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Users",
+            "description": "API for user operations"
+        }
+    ],
+    "paths": {
+        "/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Returns User List",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserListResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create a new user",
+                "requestBody": {
+                    "description": "User Request Post Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data."
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/userId"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user request with given ID",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/userId"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad Request."
+                    },
+                    "404": {
+                        "description": "Failed. User not found."
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a User by ID",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/userId"
+                    }
+                ],
+                "requestBody": {
+                    "description": "User Update Request Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad Request."
+                    },
+                    "404": {
+                        "description": "Failed. Not Found."
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete User by ID",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/userId"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Failed. Bad Request."
+                    },
+                    "404": {
+                        "description": "Failed. User not found."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "parameters": {
+            "userId": {
+                "name": "id",
+                "in": "path",
+                "description": "User Id",
+                "required": "true",
+                "example": "1",
+                "schema": {
+                    "type": "number"
+                }
+            }
+        },
+        "schemas": {
+            "UserRequest": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "pin",
+                    "balance"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Nicole",
+                        "description": "User's Name"
+                    },
+                    "pin": {
+                        "type": "string",
+                        "example": 1234,
+                        "format": "number",
+                        "description": "User's Pin"
+                    },
+                    "balance": {
+                        "type": "string",
+                        "example": 1000,
+                        "format": "number",
+                        "description": "User's Balance"
+                    }
+                }
+            },
+            "UserUpdateRequest": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "pin",
+                    "balance"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Nicole",
+                        "description": "User's Name"
+                    },
+                    "pin": {
+                        "type": "string",
+                        "example": 1234,
+                        "format": "number",
+                        "description": "User's Pin"
+                    },
+                    "balance": {
+                        "type": "string",
+                        "example": 1000,
+                        "format": "number",
+                        "description": "User's Balance"
+                    }
+                }
+            },
+            "User": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "pin",
+                    "balance"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": 1,
+                        "format": "number",
+                        "description": "User's ID"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Nicole",
+                        "description": "User's Name"
+                    },
+                    "pin": {
+                        "type": "string",
+                        "example": 1234,
+                        "format": "number",
+                        "description": "User's Pin"
+                    },
+                    "balance": {
+                        "type": "string",
+                        "format": "number",
+                        "example": 1000,
+                        "description": "User's Balance"
+                    }
+                }
+            },
+            "UserListResponse": {
+                "properties": {
+                    "users": {
+                        "type": "array",
+                        "definition": "List of users",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
