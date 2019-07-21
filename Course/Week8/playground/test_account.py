@@ -1,5 +1,5 @@
 import unittest
-from .account import display_balance
+from account import display_balance
 
 class TestAccount(unittest.TestCase):
     '''
