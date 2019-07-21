@@ -62,7 +62,7 @@ def get_users():
 
 # http://127.0.0.1:5000/users
 # no request body
-@app.route("/users/prety", methods=["GET", "PUT"])
+@app.route("/users/prety", methods=["GET"])
 def get_users_prety():
     users = User.query.all()
     user_schema = UserSchema(many=True)
