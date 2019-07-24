@@ -17,11 +17,14 @@ class TestController(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def create_user(self):
-        user = User(name='Test User',pin='1234',balance=1000)
+    def create_user_by_param(self, name, pin, balance):
+        user = User(name=name,pin=pin,balance=balance)
         db.session.add(user)
         db.session.commit()
         return user
+
+    def create_user(self):
+        return self.create_user_by_param(name="Test User", pin="1234", balance=1000)
     
     def get_user_by_id(self,id):
         return User.query.filter_by(id=id).first()
@@ -64,7 +67,46 @@ class TestController(unittest.TestCase):
         response = self.app.get(f'/users/{mock_user.id+1}')
         self.assertEqual(response.status_code,404)
 
+    def test_withdraw_money_by_user_id(self):
+        mock_user = self.create_user()
+        mock_request_data = {
+            'amount': 20,
+            'pin': "1234",
+            }
+        response = self.app.patch(f'/users/{mock_user.id}/withdraw',data=json.dumps(mock_request_data))
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(data['name'], 'Test User')
+        self.assertEqual(data['pin'], '1234')
+        self.assertEqual(data['balance'], 980)
 
+    def test_deposit_money_by_user_id(self):
+        mock_user = self.create_user()
+        mock_request_data = {
+            'amount': 20,
+            'pin': "1234",
+            }
+        response = self.app.patch(f'/users/{mock_user.id}/deposit',data=json.dumps(mock_request_data))
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(data['name'], 'Test User')
+        self.assertEqual(data['pin'], '1234')
+        self.assertEqual(data['balance'], 1020)
+
+    def test_transfer_money_by_user_id(self):
+        mock_sender = self.create_user()
+        mock_receiver = self.create_user_by_param(name="Test Receiver",pin="1235",balance=500)
+        mock_request_data = {
+            'amount': 20,
+            'pin': "1234",
+            'receiverId': 2
+            }
+        response = self.app.patch(f'/users/{mock_sender.id}/transfer',data=json.dumps(mock_request_data))
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(data['name'], "Test Receiver")
+        self.assertEqual(data['pin'], '1235')
+        self.assertEqual(data['balance'], 520)
         
 
 

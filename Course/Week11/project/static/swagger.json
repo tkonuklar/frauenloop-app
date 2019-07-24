@@ -24,6 +24,10 @@
         {
             "name": "Users",
             "description": "API for user operations"
+        },
+        {
+            "name": "Transactions",
+            "description": "API for money transaction operations"
         }
     ],
     "paths": {
@@ -170,6 +174,144 @@
                     }
                 }
             }
+        },
+        "/users/{id}/withdraw" : {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/userId"
+                }
+            ],
+            "patch": {
+                "summary": "Withdraw money by User ID",
+                "tags": [
+                    "Transactions"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/userId"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Withdraw Money Request Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserMoneyRequest"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad Request."
+                    },
+                    "404": {
+                        "description": "Failed. Not Found."
+                    }
+                }
+            }
+        },
+        "/users/{id}/deposit" : {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/userId"
+                }
+            ],
+            "patch": {
+                "summary": "Deposit money by User ID",
+                "tags": [
+                    "Transactions"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/userId"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Deposit Money Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserMoneyRequest"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad Request."
+                    },
+                    "404": {
+                        "description": "Failed. Not Found."
+                    }
+                }
+            }
+        },
+        "/users/{id}/transfer" : {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/userId"
+                }
+            ],
+            "patch": {
+                "summary": "Tranfer money from sender to receiver",
+                "tags": [
+                    "Transactions"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/userId"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Transfer Money Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserMoneyTransferRequest"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad Request."
+                    },
+                    "404": {
+                        "description": "Failed. Not Found."
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -210,6 +352,52 @@
                         "example": 1000,
                         "format": "number",
                         "description": "User's Balance"
+                    }
+                }
+            },
+            "UserMoneyRequest": {
+                "type": "object",
+                "required": [
+                    "amount",
+                    "pin"
+                ],
+                "properties": {
+                    "amount": {
+                        "type": "string",
+                        "format": "number",
+                        "example": 30,
+                        "description": "Amount"
+                    },
+                    "pin": {
+                        "type": "string",
+                        "example": "1234",
+                        "description": "User's Pin"
+                    }
+                }
+            },
+            "UserMoneyTransferRequest": {
+                "type": "object",
+                "required": [
+                    "amount",
+                    "pin",
+                    "receiverId"
+                ],
+                "properties": {
+                    "amount": {
+                        "type": "string",
+                        "format": "number",
+                        "example": 30,
+                        "description": "Amount"
+                    },
+                    "pin": {
+                        "type": "string",
+                        "example": "1234",
+                        "description": "User's Pin"
+                    },
+                    "receiverId": {
+                        "type": "string",
+                        "example": "1",
+                        "description": "Receiver User Id"
                     }
                 }
             },
